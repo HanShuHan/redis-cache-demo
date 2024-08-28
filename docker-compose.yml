@@ -1,0 +1,43 @@
+services:
+  mysql:
+    container_name: redis-cache-demo-mysql
+    image: mysql:8.0.36
+    ports:
+      - 13306:3306
+    expose:
+      - 13306
+    environment:
+      MYSQL_DATABASE: redis-cache-db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: chainmeans
+      MYSQL_PASSWORD: chainmeans
+    volumes:
+      - redis-cache-demo-mysql-db:/var/lib/mysql
+    networks:
+      - cache_network
+    restart: no
+
+  redis:
+    container_name: redis-cache-demo-redis
+    image: redis:latest
+    ports:
+      - 16379:6379
+    expose:
+      - 16379
+    depends_on:
+      - mysql
+    volumes:
+      - redis-cache-demo-redis-data:/data
+    networks:
+      - cache_network
+    restart: no
+
+networks:
+  cache_network:
+    driver: bridge
+
+volumes:
+  redis-cache-demo-mysql-db:
+    driver: local
+  redis-cache-demo-redis-data:
+    driver: local
